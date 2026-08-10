@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title description">
-  <title id="title">Adicionar fotografia profissional de Rafael e Gabriel</title>
-  <desc id="description">Placeholder horizontal para fotografia real dos responsáveis por Custódio.</desc>
-  <rect width="1200" height="680" fill="#E5E0D7"/>
-  <rect x="46" y="46" width="1108" height="588" fill="none" stroke="#161616" stroke-opacity=".28" stroke-width="2"/>
-  <path d="M180 500 420 263l178 160 157-122 258 199" fill="none" stroke="#161616" stroke-opacity=".18" stroke-width="3"/>
-  <circle cx="420" cy="263" r="7" fill="#244DFF"/><circle cx="598" cy="423" r="7" fill="#244DFF"/><circle cx="755" cy="301" r="7" fill="#244DFF"/>
-  <g fill="#161616" font-family="Arial, sans-serif" text-anchor="middle"><text x="600" y="100" font-size="17" font-weight="700" letter-spacing="3">FOTOGRAFIA DOS RESPONSÁVEIS</text><text x="600" y="570" font-size="42" font-weight="700">Adicionar fotografia profissional</text><text x="600" y="610" font-size="28">de Rafael e Gabriel</text></g>
-</svg>
