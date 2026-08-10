@@ -10,7 +10,7 @@ window.CUSTODIO_CONFIG = {
     general: "contato@custodiogestao.com.br",
     rafael: "rafael@custodiogestao.com.br",
     gabriel: "gabriel@custodiogestao.com.br",
-    subject: "Quero conversar com Custódio"
+    subject: "Quero responder à pergunta da Custódio"
   },
   phone: "(71) 98314-3061",
   whatsappUrl: "https://wa.me/5571983143061",
