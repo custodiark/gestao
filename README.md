@@ -29,7 +29,7 @@ O site não requer instalação nem build. Abra `index.html` diretamente no nave
 
 Todos os contatos editáveis ficam centralizados em `config.js`:
 
-- Atualize `whatsappUrl` somente com uma URL completa (`https://...`) para exibir os CTAs de WhatsApp. Mantenha o parâmetro `text` para abrir a conversa com a mensagem inicial da prospecção.
+- Atualize `whatsappUrl` somente com uma URL completa (`https://...`) para exibir os CTAs de WhatsApp.
 - Atualize `schedulingUrl` somente com uma URL completa (`https://...`) para exibir o botão de agendamento.
 - Preencha `phone` quando o número de contato for alterado; ele aparece como link de ligação na seção de contato.
 - Para exibir o valor do Painel de Saúde Financeira, altere `price.show` para `true`. Por padrão, ele permanece oculto.
