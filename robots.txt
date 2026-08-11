@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://custodiogestao.com.br/sitemap.xml
+Sitemap: https://custodiark.github.io/gestao/sitemap.xml

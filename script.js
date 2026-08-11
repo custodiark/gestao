@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const config = window.CUSTODIO_CONFIG || {};
+  const config = window.COSTONE_CONFIG || {};
   const email = config.email && config.email.general ? config.email.general.trim() : "";
   const emailSubject = config.email && config.email.subject ? config.email.subject.trim() : "";
   const menuToggle = document.querySelector("[data-menu-toggle]");

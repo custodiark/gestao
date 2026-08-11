@@ -1,4 +1,4 @@
-# Custódio — site institucional
+# COSTONE — site institucional
 
 Landing page estática, desenvolvida em HTML, CSS e JavaScript puro para publicação direta no GitHub Pages.
 
@@ -16,7 +16,7 @@ custodio-site/
 ├── .nojekyll
 └── assets/
     ├── favicon.svg
-    ├── logo-custodio.svg
+    ├── logo-costone.svg
     ├── foto-rafael-gabriel-placeholder.svg
     └── og-image-placeholder.svg
 ```
@@ -47,7 +47,7 @@ Não utilize fotografia gerada por IA ou imagem de banco nessa seção.
 
 ## Publicar no GitHub Pages
 
-1. Crie um repositório no GitHub, por exemplo `custodio-site`.
+1. Crie ou use um repositório no GitHub, por exemplo `costone-site`.
 2. Envie o conteúdo desta pasta para a raiz do repositório.
 3. No repositório, abra **Settings → Pages**.
 4. Em **Build and deployment**, escolha **Deploy from a branch**.
@@ -56,10 +56,10 @@ Não utilize fotografia gerada por IA ou imagem de banco nessa seção.
 
 ## Configurar o domínio personalizado
 
-1. Em **Settings → Pages**, informe `custodiogestao.com.br` em **Custom domain**.
+1. Quando houver um domínio próprio da COSTONE, informe-o em **Settings → Pages**, em **Custom domain**.
 2. No provedor do domínio, configure os registros DNS indicados pelo GitHub para o domínio raiz e, se desejar, para `www`.
 3. Aguarde a propagação e ative **Enforce HTTPS** quando a opção estiver disponível.
-4. Mantenha `canonical`, Open Graph, `robots.txt` e `sitemap.xml` apontando para `https://custodiogestao.com.br/`.
+4. Atualize `domain` em `config.js` e mantenha `canonical`, Open Graph, `robots.txt` e `sitemap.xml` apontando para o mesmo endereço.
 
 Consulte a documentação atual do GitHub Pages antes de alterar DNS, pois os valores podem ser atualizados pelo serviço.
 
