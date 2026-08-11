@@ -63,7 +63,8 @@
     const siteUrl = getSiteUrl();
     if (!siteUrl) return;
 
-    const homeUrl = siteUrl + "/";
+    const pagePath = document.documentElement.dataset.pagePath || "/";
+    const pageUrl = siteUrl + (pagePath.startsWith("/") ? pagePath : "/" + pagePath);
     const ogImageUrl = siteUrl + "/assets/og-image-placeholder.svg";
     const canonical = document.querySelector('link[rel="canonical"]');
     const ogUrl = document.querySelector('meta[property="og:url"]');
@@ -71,15 +72,15 @@
     const twitterImage = document.querySelector('meta[name="twitter:image"]');
     const schema = document.querySelector("#structured-data");
 
-    if (canonical) canonical.href = homeUrl;
-    if (ogUrl) ogUrl.content = homeUrl;
+    if (canonical) canonical.href = pageUrl;
+    if (ogUrl) ogUrl.content = pageUrl;
     if (ogImage) ogImage.content = ogImageUrl;
     if (twitterImage) twitterImage.content = ogImageUrl;
 
     if (schema) {
       try {
         const data = JSON.parse(schema.textContent);
-        data.url = homeUrl;
+        data.url = pageUrl;
         schema.textContent = JSON.stringify(data);
       } catch (error) {
         // A marcação estática permanece válida caso o JSON-LD seja alterado manualmente de forma inválida.
