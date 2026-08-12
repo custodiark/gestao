@@ -58,6 +58,37 @@
     }
   }
 
+  function getAnalyticsMeasurementId() {
+    const analytics = config.analytics || {};
+    const measurementId = typeof analytics.measurementId === "string" ? analytics.measurementId.trim().toUpperCase() : "";
+    return /^G-[A-Z0-9]+$/.test(measurementId) ? measurementId : "";
+  }
+
+  function setupAnalytics() {
+    const measurementId = getAnalyticsMeasurementId();
+    if (!measurementId) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag("js", new Date());
+    window.gtag("config", measurementId);
+
+    const googleTag = document.createElement("script");
+    googleTag.async = true;
+    googleTag.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(measurementId);
+    document.head.append(googleTag);
+
+    document.querySelectorAll("[data-analytics-event]").forEach((element) => {
+      element.addEventListener("click", () => {
+        window.gtag("event", element.dataset.analyticsEvent, {
+          link_location: element.dataset.analyticsLocation || "unspecified"
+        });
+      });
+    });
+  }
+
 
   function updateMetadata() {
     const siteUrl = getSiteUrl();
@@ -321,6 +352,7 @@
   setOptionalLink("[data-conversation-link]", config.whatsappUrl);
   setOptionalLink("[data-scheduling-link]", config.schedulingUrl);
   setPrice();
+  setupAnalytics();
   updateMetadata();
   setText("[data-location]", config.location);
   setText("[data-current-year]", new Date().getFullYear());

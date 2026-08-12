@@ -17,6 +17,11 @@ window.COSTONE_CONFIG = {
   whatsappUrl: "https://wa.me/5571983143061",
   schedulingUrl: "",
   location: "Feira de Santana, Bahia",
+  analytics: {
+    // Cole aqui o ID de medição da sua propriedade GA4, no formato G-XXXXXXXXXX.
+    // Enquanto estiver vazio, nenhum script do Google Analytics é carregado.
+    measurementId: "G-Q4ZV3KYHLY"
+  },
   price: {
     show: false,
     value: "R$ 2.000"
