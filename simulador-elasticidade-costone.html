@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="pt-BR" data-page-path="/epd/simulador-elasticidade-costone.html">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Simulador EPD da COSTONE para explorar cenários de preço, demanda, receita, margem e estoque a partir de premissas informadas.">
+  <meta name="theme-color" content="#111111">
+  <meta name="robots" content="index, follow">
+  <title>Simulador EPD | COSTONE</title>
+  <link rel="canonical" href="https://custodiark.github.io/gestao/epd/simulador-elasticidade-costone.html">
+  <link rel="icon" href="../arsenal/03_simbolo_isolado.png" type="image/png">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Simulador EPD | COSTONE">
+  <meta property="og:description" content="Explore cenários de preço, demanda, receita, margem e estoque a partir de premissas informadas.">
+  <meta property="og:url" content="https://custodiark.github.io/gestao/epd/simulador-elasticidade-costone.html">
+  <meta property="og:image" content="https://custodiark.github.io/gestao/assets/og-image-placeholder.svg">
+  <meta property="og:image:alt" content="COSTONE — Gestão e Planejamento Financeiro Empresarial">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulador EPD | COSTONE">
+  <meta name="twitter:description" content="Explore cenários de preço, demanda, receita, margem e estoque a partir de premissas informadas.">
+  <meta name="twitter:image" content="https://custodiark.github.io/gestao/assets/og-image-placeholder.svg">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../config.js" defer></script>
+  <script src="../script.js" defer></script>
+  <style>
+    :root {
+      --ink: #111111;
+      --ink-soft: #1f1f1f;
+      --paper: #e9e3da;
+      --white: #ffffff;
+      --muted: #5d5a55;
+      --muted-light: #77736d;
+      --line: #d8d5cf;
+      --blue: #1e40ff;
+      --blue-soft: #e9edff;
+      --green: #187a50;
+      --green-soft: #e3f3eb;
+      --red: #b42332;
+      --red-soft: #fbe8ea;
+      --amber: #9a5b00;
+      --amber-soft: #fff0d7;
+      --shadow: 0 14px 34px rgba(20, 20, 20, .06);
+      --side: clamp(1.25rem, 4vw, 3.5rem);
+      --container: 1200px;
+      --sans: "Segoe UI", Arial, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 var(--sans); }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button, input[type="range"] { cursor: pointer; }
+    ::selection { background: var(--ink); color: var(--paper); }
+    :focus-visible { outline: 3px solid rgba(30, 64, 255, .45); outline-offset: 3px; }
+
+    .skip-link { position: fixed; z-index: 100; top: -5rem; left: 1rem; background: var(--blue); color: var(--white); padding: .75rem 1rem; font-weight: 700; }
+    .skip-link:focus { top: 1rem; }
+    .container { width: min(calc(100% - (var(--side) * 2)), var(--container)); margin: 0 auto; }
+
+    .site-header { position: sticky; z-index: 20; top: 0; border-bottom: 1px solid rgba(22, 22, 22, .12); background: rgba(233, 227, 218, .94); backdrop-filter: blur(10px); }
+    .header-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .brand { display: inline-flex; align-items: center; gap: .62rem; color: var(--ink); text-decoration: none; line-height: 1; }
+    .brand-mark { width: 27px; height: 27px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 50%; font-size: .72rem; font-weight: 800; }
+    .brand-name { font-size: 1.34rem; font-weight: 800; letter-spacing: -.07em; }
+    .header-note { color: var(--muted); font-size: .76rem; font-weight: 650; }
+    .header-note span { color: var(--blue); }
+
+    .hero { padding: clamp(3.75rem, 8vw, 7.5rem) 0 clamp(2.8rem, 6vw, 5rem); border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 1rem; color: var(--blue); font-size: .68rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { max-width: 850px; margin: 0; font-size: clamp(2.5rem, 6vw, 5.35rem); font-weight: 750; letter-spacing: -.07em; line-height: .98; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); align-items: end; gap: 2rem; }
+    .hero-copy { max-width: 590px; margin: 1.6rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.16rem); }
+    .hero-aside { border-left: 1px solid var(--ink); padding: .3rem 0 .3rem 1.2rem; color: var(--muted); font-size: .86rem; }
+    .hero-aside strong { display: block; margin-bottom: .35rem; color: var(--ink); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+    .signal-strip { overflow: hidden; background: var(--blue); color: var(--white); }
+    .signal-track { display: flex; align-items: center; gap: 1.15rem; width: max-content; padding: .9rem 0; font-size: .63rem; font-weight: 800; letter-spacing: .14em; white-space: nowrap; }
+    .signal-track i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.58); }
+
+    main { padding: clamp(2.5rem, 6vw, 5.5rem) 0 5rem; }
+    .tool-intro { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.5rem; }
+    h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2.45rem); line-height: 1.05; letter-spacing: -.055em; }
+    .tool-intro p { max-width: 530px; margin: 0; color: var(--muted); font-size: .9rem; }
+
+    .workspace { display: grid; grid-template-columns: minmax(260px, .72fr) minmax(0, 1.78fr); align-items: start; gap: 1.25rem; }
+    .panel, .card { position: relative; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .panel::before, .chart-card::before { position: absolute; top: 0; left: 0; width: 25%; height: 3px; background: var(--blue); content: ""; }
+    .control-panel { position: sticky; top: 96px; padding: 1.35rem; }
+    .panel-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+    .panel-heading h3, .chart-heading h3, .scenario-head h3 { margin: 0; font-size: .96rem; letter-spacing: -.025em; }
+    .panel-heading span { color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .field-group { padding: 1.15rem 0; border-bottom: 1px solid var(--line); }
+    .field-group:last-of-type { border-bottom: 0; }
+    .field-group legend { margin-bottom: .65rem; padding: 0; color: var(--ink); font-size: .75rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    fieldset { min-width: 0; margin: 0; border: 0; padding: 0; }
+    .field { display: grid; gap: .4rem; margin-top: .85rem; }
+    .field:first-of-type { margin-top: 0; }
+    label { color: var(--muted); font-size: .78rem; font-weight: 650; }
+    .input-wrap { display: flex; align-items: center; gap: .45rem; border: 1px solid var(--line); background: #fff; transition: border-color .18s ease, box-shadow .18s ease; }
+    .input-wrap:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30, 64, 255, .12); }
+    .input-prefix { padding-left: .75rem; color: var(--muted); font-size: .75rem; font-weight: 700; }
+    input[type="number"] { width: 100%; min-width: 0; border: 0; padding: .68rem .75rem; color: var(--ink); outline: 0; font-weight: 650; }
+    input[type="number"]::placeholder { color: #aaa59e; font-weight: 500; }
+    .field-hint { margin: .4rem 0 0; color: var(--muted-light); font-size: .7rem; }
+    .range-card { margin-top: 1.15rem; padding: 1rem; background: var(--blue-soft); border: 1px solid #cfd7ff; }
+    .range-label { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+    .range-label label { color: var(--ink); }
+    .range-value { color: var(--blue); font-size: 1.3rem; font-weight: 800; letter-spacing: -.045em; white-space: nowrap; }
+    input[type="range"] { width: 100%; height: 4px; margin: 1rem 0 .35rem; accent-color: var(--blue); }
+    .range-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: .68rem; }
+    .price-change { min-height: 1.05rem; margin: .6rem 0 0; color: var(--muted); font-size: .75rem; font-weight: 650; }
+    .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: 1.15rem; }
+    .button { min-height: 42px; border: 1px solid transparent; padding: .65rem .8rem; font-size: .76rem; font-weight: 750; text-align: center; transition: transform .18s ease, background-color .18s ease, border-color .18s ease; }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--ink); color: var(--white); }
+    .button-primary:hover { background: #363636; }
+    .button-secondary { background: transparent; border-color: var(--ink); color: var(--ink); }
+    .button-secondary:hover { background: var(--ink); color: var(--white); }
+    .form-error { display: none; margin: 1rem 0 0; padding: .72rem .78rem; background: var(--red-soft); border-left: 3px solid var(--red); color: #79202a; font-size: .76rem; font-weight: 650; }
+
+    .analysis { display: grid; gap: 1.25rem; }
+    .status-band { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1rem; padding: 1rem 1.2rem; background: var(--ink); color: var(--white); }
+    .status-index { color: #aebcff; font-size: .68rem; font-weight: 800; letter-spacing: .15em; }
+    .status-band p { margin: 0; font-size: .86rem; }
+    .status-band strong { color: #fff; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow); }
+    .metric { min-width: 0; padding: 1.1rem; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric-label { min-height: 2.5em; color: var(--muted); font-size: .67rem; font-weight: 800; letter-spacing: .07em; line-height: 1.32; text-transform: uppercase; }
+    .metric-value { display: block; overflow: hidden; margin-top: .7rem; font-size: clamp(1.16rem, 2vw, 1.58rem); font-weight: 800; letter-spacing: -.055em; text-overflow: ellipsis; white-space: nowrap; }
+    .metric-sub { min-height: 2.6em; margin-top: .4rem; color: var(--muted); font-size: .69rem; line-height: 1.35; }
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    .neutral { color: var(--ink); }
+    .emphasis { color: var(--blue); }
+
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .chart-card { position: relative; padding: 1.15rem; }
+    .chart-heading { display: flex; align-items: start; justify-content: space-between; gap: .75rem; margin-bottom: .9rem; }
+    .chart-heading p { margin: .25rem 0 0; color: var(--muted); font-size: .72rem; }
+    .chart-key { padding: .22rem .45rem; background: var(--blue-soft); color: var(--blue); font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .chart { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart text { fill: var(--muted); font-family: var(--sans); font-size: 11px; }
+    .chart .axis-title { fill: var(--ink); font-size: 11px; font-weight: 700; }
+    .chart .grid-line { stroke: #e6e3de; stroke-width: 1; }
+    .chart .axis-line { stroke: #bcb8b1; stroke-width: 1; }
+    .chart .label-current { fill: var(--ink); font-size: 10px; font-weight: 700; }
+    .chart .label-projected { fill: var(--blue); font-size: 10px; font-weight: 800; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: .6rem; color: var(--muted); font-size: .68rem; }
+    .chart-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+    .legend-dot.blue { background: var(--blue); }
+    .legend-line { width: 13px; height: 0; border-top: 2px dashed var(--amber); }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .insight { padding: 1.25rem; }
+    .insight h3 { margin: 0; font-size: .8rem; letter-spacing: .055em; text-transform: uppercase; }
+    .insight p { margin: .85rem 0 0; color: var(--muted); font-size: .87rem; }
+    .insight strong { color: var(--ink); }
+    .info-box { padding: 1.1rem 1.25rem; border-left: 3px solid var(--blue); background: var(--blue-soft); color: #22336e; font-size: .78rem; }
+    .info-box strong { color: var(--ink); }
+
+    .scenarios { margin-top: 1.25rem; padding: 1.2rem; }
+    .scenario-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+    .scenario-head p { margin: .25rem 0 0; color: var(--muted); font-size: .74rem; }
+    .text-button { border: 0; padding: .2rem 0; background: transparent; color: var(--blue); font-size: .73rem; font-weight: 750; text-decoration: underline; text-underline-offset: .2em; }
+    .scenario-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: .7rem; margin-top: 1rem; }
+    .scenario-empty { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .8rem; }
+    .scenario-item { display: grid; gap: .2rem; min-width: 0; border: 1px solid var(--line); padding: .75rem; background: #fff; text-align: left; }
+    .scenario-item:hover { border-color: var(--blue); background: var(--blue-soft); }
+    .scenario-item strong { color: var(--blue); font-size: .85rem; }
+    .scenario-item small { color: var(--muted); font-size: .65rem; line-height: 1.35; }
+
+    .method { display: grid; grid-template-columns: .85fr 1.15fr; gap: 2rem; margin-top: clamp(3.5rem, 8vw, 7rem); padding-top: clamp(2.75rem, 6vw, 5rem); border-top: 1px solid var(--line); }
+    .method h2 { max-width: 440px; }
+    .method-copy { color: var(--muted); font-size: .92rem; }
+    .method-copy p { margin: 0 0 1.1rem; }
+    .formula-list { display: grid; gap: .6rem; margin-top: 1.4rem; }
+    .formula { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem .85rem; background: rgba(255,255,255,.55); border: 1px solid var(--line); color: var(--ink); font-size: .79rem; }
+    .formula span { color: var(--muted); }
+    footer { padding: 1.5rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .72rem; }
+    footer .container { display: flex; justify-content: space-between; gap: 1rem; }
+
+    /* Camada de integração com a linguagem visual do site institucional. */
+    .site-header { position: sticky; z-index: 30; top: 0; border-bottom: 1px solid rgba(17,17,17,.12); background: rgba(233,227,218,.94); backdrop-filter: blur(10px); }
+    .header-inner { min-height: 76px; justify-content: initial; }
+    .brand { flex: 0 0 auto; gap: 0; }
+    .brand-lockup { display: inline-flex; align-items: center; gap: .55rem; }
+    .brand-symbol { display: block; width: 43px; height: 43px; flex: 0 0 43px; object-fit: contain; }
+    .brand-symbol--light { background: url("../arsenal/06_negativa_branca_transparente.png") -9px -5px / 180px 52px no-repeat; }
+    .brand-name { color: var(--ink); font: 800 1.34rem/1 "Segoe UI", Arial, sans-serif; letter-spacing: -.07em; }
+    .menu-toggle { display: none; }
+    .main-nav { display: flex; flex: 1; align-items: center; justify-content: center; gap: clamp(.75rem, 1.6vw, 1.35rem); }
+    .main-nav a { position: relative; color: #494744; font-size: .74rem; font-weight: 650; text-decoration: none; white-space: nowrap; }
+    .main-nav a::after { position: absolute; right: 0; bottom: -.35rem; left: 0; height: 1px; content: ""; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
+    .main-nav a:hover::after, .main-nav a[aria-current="page"]::after { transform: scaleX(1); }
+    .header-cta { display: inline-flex; width: auto; min-height: auto; margin-left: auto; padding: .62rem .85rem; text-decoration: none; }
+
+    .hero { position: relative; isolation: isolate; overflow: hidden; padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(3.4rem, 7vw, 6rem); background: var(--paper); }
+    .hero-grid { position: relative; z-index: 1; grid-template-columns: minmax(0, 1.2fr) minmax(240px, .55fr); max-width: var(--container); min-height: 0; }
+    .hero-copy { max-width: 660px; color: #49453f; font-size: clamp(1rem, 1.4vw, 1.14rem); line-height: 1.65; }
+    .hero-aside { align-self: end; max-width: 300px; border-left: 2px solid var(--blue); padding: .25rem 0 .25rem 1.2rem; color: #5c5751; font-size: .84rem; line-height: 1.6; }
+    .hero-aside strong { color: var(--ink); }
+    .brand-watermark { position: absolute; z-index: 0; display: block; width: clamp(21rem, 34vw, 37rem); height: auto; pointer-events: none; user-select: none; }
+    .brand-watermark--epd { top: 50%; right: clamp(-14rem, -7vw, -5rem); opacity: .055; transform: translateY(-50%); }
+    .signal-strip { border-bottom: 0; background: var(--ink); }
+    .signal-track { color: var(--paper); }
+    .signal-track i { border-radius: 0; background: var(--blue); }
+
+    main.container { position: relative; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(5rem, 9vw, 8rem); }
+    .tool-intro { margin-bottom: 2.25rem; }
+    .tool-intro > div .eyebrow { color: var(--blue); }
+    .workspace { gap: 1.5rem; }
+    .panel, .card { box-shadow: none; }
+    .control-panel { top: 98px; border-color: var(--ink); }
+    .panel::before, .chart-card::before { width: 20%; height: 3px; }
+    .status-band { border-left: 3px solid var(--blue); background: var(--ink-soft); }
+    .metric-grid { box-shadow: none; }
+    .metric:first-child { position: relative; }
+    .metric:first-child::before { position: absolute; top: 0; right: 0; left: 0; height: 3px; content: ""; background: var(--blue); }
+    .chart-card { background: var(--white); }
+    .chart-heading h3, .scenario-head h3 { font-size: 1rem; }
+    .insight { border-top: 3px solid var(--blue); }
+    .scenarios { border-color: var(--ink); box-shadow: none; }
+    .method { margin-top: clamp(4.5rem, 9vw, 8rem); }
+    .method-copy { color: #59544e; }
+    .formula { background: var(--white); }
+    .site-footer { padding: 2.1rem 0 1.7rem; border: 0; background: var(--ink-soft); color: var(--white); }
+    .site-footer .footer-top, .site-footer .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .site-footer .footer-top { padding-bottom: 2rem; }
+    .site-footer .footer-brand .brand-name { color: var(--white); }
+    .site-footer .footer-contact { display: flex; gap: 1.7rem; color: #d2d0ca; font-size: .77rem; }
+    .site-footer .footer-contact a { border-bottom: 1px solid rgba(255,255,255,.45); }
+    .site-footer .footer-bottom { border-top: 1px solid rgba(255,255,255,.15); padding-top: 1.5rem; color: #aaa7a1; font-size: .66rem; }
+
+    /* Movimentos de apoio: discretos, sem dependências e desativados conforme a preferência do visitante. */
+    @media (prefers-reduced-motion: no-preference) {
+      .brand-watermark--epd { animation: epd-watermark-drift 13s cubic-bezier(.4, 0, .2, 1) infinite; }
+      html.motion-enabled .story-section.story-ready .tool-intro,
+      html.motion-enabled .story-section.story-ready .workspace,
+      html.motion-enabled .story-section.story-ready .scenarios,
+      html.motion-enabled .story-section.story-ready .method > * { opacity: 0; transform: translateY(16px); transition: opacity .6s cubic-bezier(.16, 1, .3, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
+      html.motion-enabled .story-section.is-story-active .tool-intro,
+      html.motion-enabled .story-section.is-story-active .workspace,
+      html.motion-enabled .story-section.is-story-active .scenarios,
+      html.motion-enabled .story-section.is-story-active .method > * { opacity: 1; transform: translateY(0); }
+      html.motion-enabled .story-section.story-ready .workspace { transition-delay: .08s; }
+      html.motion-enabled .story-section.story-ready .scenarios { transition-delay: .16s; }
+      html.motion-enabled .story-section.story-ready .method > *:last-child { transition-delay: .08s; }
+    }
+    @keyframes epd-watermark-drift {
+      0%, 100% { opacity: .045; transform: translateY(-50%) rotate(0deg); }
+      50% { opacity: .07; transform: translateY(calc(-50% - 11px)) rotate(3deg); }
+    }
+
+    @media (max-width: 1020px) { .main-nav { gap: .7rem; }.main-nav a { font-size: .68rem; }.header-cta { display: none; } }
+    @media (max-width: 800px) {
+      .brand-watermark { display: none; }
+      .brand-symbol { width: 37px; height: 37px; flex-basis: 37px; }
+      .brand-symbol--light { background-size: 155px 45px; background-position: -8px -4px; }
+      .brand-name { font-size: 1.17rem; }
+      .header-inner { min-height: 67px; justify-content: space-between; }
+      .menu-toggle { position: relative; z-index: 2; display: grid; width: 40px; height: 40px; place-content: center; gap: 6px; border: 1px solid var(--line); background: transparent; }
+      .menu-toggle span { display: block; width: 17px; height: 1px; background: var(--ink); transition: transform .2s ease; }
+      .menu-toggle[aria-expanded="true"] span:nth-of-type(1) { transform: translateY(3.5px) rotate(45deg); }
+      .menu-toggle[aria-expanded="true"] span:nth-of-type(2) { transform: translateY(-3.5px) rotate(-45deg); }
+      .main-nav { position: fixed; inset: 67px 0 auto; display: none; width: 100%; height: calc(100vh - 67px); height: calc(100dvh - 67px); align-items: flex-start; flex-direction: column; justify-content: flex-start; gap: 0; overflow: auto; padding: 1.25rem var(--side) 2rem; border-top: 1px solid var(--line); background: var(--paper); }
+      .main-nav.is-open { display: flex; }
+      .main-nav a { width: 100%; border-bottom: 1px solid var(--line); padding: 1rem 0; color: var(--ink); font-size: 1.25rem; font-weight: 700; letter-spacing: -.04em; }
+      .main-nav a::after { display: none; }
+      .hero { padding-top: 4.5rem; }
+      .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-aside { max-width: 510px; }
+      .site-footer .footer-top, .site-footer .footer-bottom { align-items: flex-start; flex-direction: column; }
+      .site-footer .footer-top { gap: 1.35rem; }
+      .site-footer .footer-contact { flex-direction: column; gap: .45rem; }
+    }
+
+    @media (max-width: 1000px) {
+      .workspace { grid-template-columns: 1fr; }
+      .control-panel { position: static; }
+      .scenario-list { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .header-inner { min-height: 67px; }
+      .header-note { display: none; }
+      .hero-grid, .method, .tool-intro, .insight-grid { grid-template-columns: 1fr; display: grid; }
+      .hero-aside { margin-top: .25rem; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .chart-grid { grid-template-columns: 1fr; }
+      .scenario-list { grid-template-columns: 1fr 1fr; }
+      footer .container { display: grid; }
+    }
+    @media (max-width: 450px) {
+      h1 { font-size: 2.55rem; }
+      .control-panel, .chart-card, .insight, .scenarios { padding: 1rem; }
+      .button-row { grid-template-columns: 1fr; }
+      .metric { padding: .9rem; }
+      .scenario-list { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#simulador">Pular para o simulador</a>
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="../index.html#inicio" aria-label="COSTONE — página inicial">
+        <span class="brand-lockup">
+          <img class="brand-symbol" src="../arsenal/03_simbolo_isolado.png" width="2400" height="2400" alt="" aria-hidden="true">
+          <span class="brand-name">COSTONE</span>
+        </span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navegacao-principal" data-menu-toggle>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+      <nav class="main-nav" id="navegacao-principal" aria-label="Navegação principal" data-menu>
+        <a href="../index.html#para-quem-e">Para quem é</a>
+        <a href="../index.html#como-funciona">Como funciona</a>
+        <a href="../fpa.html">FP&amp;A na prática</a>
+        <a href="simulador-elasticidade-costone.html" aria-current="page">Simulador EPD</a>
+        <a href="../index.html#contato">Contato</a>
+      </nav>
+      <a class="button button-small button-dark header-cta" data-conversation-link hidden>Fazer uma pergunta</a>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="page-title">
+    <img class="brand-watermark brand-watermark--epd" src="../arsenal/03_simbolo_isolado.png" width="2400" height="2400" alt="" aria-hidden="true">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">SIMULADOR EPD / PREÇO, DEMANDA E DECISÃO</p>
+        <h1 id="page-title">Antes de mudar o preço, teste o efeito da decisão.</h1>
+        <p class="hero-copy">Use a elasticidade-preço da demanda para explorar como uma hipótese de preço pode afetar volume, receita, margem e estoque. É uma demonstração prática de como premissas financeiras podem orientar uma conversa de gestão.</p>
+      </div>
+      <aside class="hero-aside">
+        <strong>Leitura responsável</strong>
+        O resultado depende das premissas informadas. Use o simulador para testar cenários, não como previsão isolada ou recomendação automática de preço.
+      </aside>
+    </div>
+  </section>
+  <div class="signal-strip" aria-hidden="true"><div class="container signal-track"><span>PREÇO</span><i></i><span>DEMANDA</span><i></i><span>RECEITA</span><i></i><span>MARGEM</span><i></i><span>ESTOQUE</span><i></i><span>CAPITAL DE GIRO</span></div></div>
+
+  <main id="simulador" class="container">
+    <section aria-labelledby="tool-title">
+      <div class="tool-intro">
+        <div><p class="eyebrow">01 / Simulação</p><h2 id="tool-title">Teste uma decisão de preço.</h2></div>
+        <p>Defina uma situação, ajuste o preço projetado e compare as consequências no modelo. A utilidade está em tornar premissas e trade-offs visíveis antes de decidir.</p>
+      </div>
+
+      <div class="workspace">
+        <form class="panel control-panel" id="simulator-form" novalidate>
+          <div class="panel-heading"><h3>Premissas do cenário</h3><span>Editar</span></div>
+          <fieldset class="field-group">
+            <legend>Situação atual</legend>
+            <div class="field"><label for="current-price">Preço atual (P₁)</label><div class="input-wrap"><span class="input-prefix">R$</span><input id="current-price" type="number" min="0.01" step="0.01" inputmode="decimal" value="100"></div></div>
+            <div class="field"><label for="current-demand">Demanda atual (Q₁)</label><div class="input-wrap"><input id="current-demand" type="number" min="1" step="1" inputmode="numeric" value="500"><span class="input-prefix" style="padding:0 .75rem 0 0">un.</span></div></div>
+          </fieldset>
+          <fieldset class="field-group">
+            <legend>Premissas econômicas</legend>
+            <div class="field"><label for="elasticity">Elasticidade-preço (Ed)</label><div class="input-wrap"><input id="elasticity" type="number" step="0.1" inputmode="decimal" value="-1.5"></div><p class="field-hint">Use um valor negativo. Ex.: −1,5 indica demanda elástica.</p></div>
+            <div class="field"><label for="unit-cost">Custo unitário / CMV <span style="font-weight:500">(opcional)</span></label><div class="input-wrap"><span class="input-prefix">R$</span><input id="unit-cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Não informado"></div></div>
+            <div class="field"><label for="stock">Estoque disponível <span style="font-weight:500">(opcional)</span></label><div class="input-wrap"><input id="stock" type="number" min="1" step="1" inputmode="numeric" placeholder="Sem limite"><span class="input-prefix" style="padding:0 .75rem 0 0">un.</span></div></div>
+          </fieldset>
+          <div class="range-card">
+            <div class="range-label"><label for="projected-price">Novo preço (P₂)</label><output class="range-value" id="projected-price-output" for="projected-price">R$ 100,00</output></div>
+            <input id="projected-price" type="range" min="35" max="165" value="100" step="0.5">
+            <div class="range-scale"><span id="price-min">R$ 35</span><span id="price-max">R$ 165</span></div>
+            <p class="price-change" id="price-change">Preço inalterado.</p>
+          </div>
+          <div class="button-row"><button class="button button-primary" id="save-scenario" type="button">Salvar cenário</button><button class="button button-secondary" id="reset-scenario" type="reset">Restaurar exemplo</button></div>
+          <p class="form-error" id="form-error" role="alert"></p>
+        </form>
+
+        <section class="analysis" aria-label="Resultados da simulação">
+          <div class="status-band"><span class="status-index">LEITURA</span><p id="status-text"><strong>Cenário base.</strong> Ajuste o preço projetado para visualizar o efeito sobre a operação.</p></div>
+          <div class="metric-grid">
+            <article class="metric"><div class="metric-label" id="metric-main-label">Receita projetada</div><output class="metric-value neutral" id="metric-main-value">—</output><div class="metric-sub" id="metric-main-sub">Informe um cenário válido.</div></article>
+            <article class="metric"><div class="metric-label">Demanda projetada</div><output class="metric-value neutral" id="metric-demand-value">—</output><div class="metric-sub" id="metric-demand-sub">—</div></article>
+            <article class="metric"><div class="metric-label" id="metric-change-label">Variação na receita</div><output class="metric-value neutral" id="metric-change-value">—</output><div class="metric-sub" id="metric-change-sub">—</div></article>
+            <article class="metric"><div class="metric-label">Margem no novo preço</div><output class="metric-value neutral" id="metric-margin-value">—</output><div class="metric-sub" id="metric-margin-sub">Informe o CMV para calcular.</div></article>
+          </div>
+
+          <div class="chart-grid">
+            <article class="card chart-card"><div class="chart-heading"><div><h3>Curva de demanda</h3><p>Modelo de elasticidade constante</p></div><span class="chart-key">Q = f(P)</span></div><svg id="demand-chart" class="chart" viewBox="0 0 640 290" role="img" aria-label="Curva de demanda com preço atual e projetado"></svg><div class="chart-legend"><span><i class="legend-dot"></i>Atual</span><span><i class="legend-dot blue"></i>Projetado</span><span id="stock-legend" hidden><i class="legend-line"></i>Estoque</span></div></article>
+            <article class="card chart-card"><div class="chart-heading"><div><h3 id="value-chart-title">Curva de receita</h3><p id="value-chart-subtitle">Receita total conforme o preço muda</p></div><span class="chart-key" id="value-chart-key">RT = P × Q</span></div><svg id="value-chart" class="chart" viewBox="0 0 640 290" role="img" aria-label="Curva de receita ou lucro com preço atual e projetado"></svg><div class="chart-legend"><span><i class="legend-dot"></i>Atual</span><span><i class="legend-dot blue"></i>Projetado</span><span id="optimal-legend" hidden><i class="legend-line"></i>Preço ótimo</span></div></article>
+          </div>
+
+          <div class="insight-grid">
+            <article class="card insight"><h3>Interpretação econômica</h3><p id="economic-insight">—</p></article>
+            <article class="card insight"><h3>Decisão em foco</h3><p id="decision-insight">—</p></article>
+          </div>
+          <aside class="info-box" id="stock-insight" hidden></aside>
+        </section>
+      </div>
+
+      <section class="card scenarios" aria-labelledby="scenario-title">
+        <div class="scenario-head"><div><h3 id="scenario-title">Cenários salvos neste dispositivo</h3><p>Guarde até oito combinações para comparar hipóteses. Clique em um cartão para carregá-lo.</p></div><button id="clear-scenarios" class="text-button" type="button" hidden>Limpar cenários</button></div>
+        <div class="scenario-list" id="scenario-list"><p class="scenario-empty">Nenhum cenário salvo ainda.</p></div>
+      </section>
+    </section>
+
+    <section class="method" aria-labelledby="method-title">
+      <div><p class="eyebrow">02 / Premissas</p><h2 id="method-title">Uma leitura útil começa com premissas explícitas.</h2></div>
+      <div class="method-copy">
+        <p>O simulador assume que a elasticidade se mantém constante no intervalo de preço analisado e que o CMV unitário não muda. Essas simplificações são úteis para testar hipóteses, mas devem ser confrontadas com dados reais de vendas, concorrência e capacidade operacional.</p>
+        <p>Quando há estoque, o painel mostra a quantidade que pode ser efetivamente atendida. O “preço sem ruptura” é o ponto em que a demanda projetada se iguala ao estoque — ele não substitui uma análise de lucro, mercado ou posicionamento.</p>
+        <div class="formula-list" aria-label="Fórmulas utilizadas"><div class="formula"><span>Demanda projetada</span><strong>Q₂ = Q₁ × (P₂/P₁)<sup>Ed</sup></strong></div><div class="formula"><span>Receita total</span><strong>RT = P × Q</strong></div><div class="formula"><span>Lucro, se houver CMV</span><strong>π = (P − c) × Q</strong></div><div class="formula"><span>Preço ótimo de lucro*</span><strong>P* = c × Ed ÷ (Ed + 1)</strong></div></div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-top">
+      <a class="brand footer-brand" href="../index.html#inicio" aria-label="COSTONE — página inicial">
+        <span class="brand-lockup"><span class="brand-symbol brand-symbol--light" aria-hidden="true"></span><span class="brand-name">COSTONE</span></span>
+      </a>
+      <div class="footer-contact"><a data-contact-email hidden></a><span data-location>Feira de Santana, Bahia</span></div>
+    </div>
+    <div class="container footer-bottom"><span>© <span data-current-year></span> COSTONE</span><span>* Referência de preço ótimo válida no modelo para Ed &lt; −1 e custo unitário positivo.</span></div>
+  </footer>
+
+  <script>
+    'use strict';
+
+    const el = id => document.getElementById(id);
+    const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const number = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+    const compactMoney = value => Math.abs(value) >= 1000000 ? `${value < 0 ? '−' : ''}R$ ${Math.abs(value / 1000000).toFixed(2)} mi` : Math.abs(value) >= 1000 ? `${value < 0 ? '−' : ''}R$ ${Math.abs(value / 1000).toFixed(1)} mil` : money.format(value);
+    const signedMoney = value => `${value > 0 ? '+' : value < 0 ? '−' : ''}${compactMoney(Math.abs(value))}`;
+    const signedPercent = value => `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value * 100).toFixed(1)}%`;
+    const classFor = value => value > 0.005 ? 'positive' : value < -0.005 ? 'negative' : 'neutral';
+    const storageKey = 'costone-elasticity-scenarios-v1';
+    const defaultValues = { price: 100, demand: 500, elasticity: -1.5, cost: '', stock: '', projected: 100 };
+    let scenarios = loadStoredScenarios();
+
+    function getInputs() {
+      const price = el('current-price').valueAsNumber;
+      const demand = el('current-demand').valueAsNumber;
+      const elasticity = el('elasticity').valueAsNumber;
+      const projected = el('projected-price').valueAsNumber;
+      const rawCost = el('unit-cost').value.trim();
+      const rawStock = el('stock').value.trim();
+      const cost = rawCost === '' ? null : el('unit-cost').valueAsNumber;
+      const stock = rawStock === '' ? null : el('stock').valueAsNumber;
+      return { price, demand, elasticity, projected, cost, stock };
+    }
+
+    function validate(input) {
+      if (!Number.isFinite(input.price) || input.price <= 0) return 'Informe um preço atual maior que zero.';
+      if (!Number.isFinite(input.demand) || input.demand <= 0) return 'Informe uma demanda atual maior que zero.';
+      if (!Number.isFinite(input.elasticity) || input.elasticity >= 0) return 'Use uma elasticidade-preço negativa, como −1,5.';
+      if (!Number.isFinite(input.projected) || input.projected <= 0) return 'Informe um novo preço maior que zero.';
+      if (input.cost !== null && (!Number.isFinite(input.cost) || input.cost < 0)) return 'O custo unitário deve ser zero ou positivo.';
+      if (input.stock !== null && (!Number.isFinite(input.stock) || input.stock <= 0)) return 'O estoque deve ser maior que zero ou ficar em branco.';
+      return '';
+    }
+
+    function calculate() {
+      const input = getInputs();
+      const error = validate(input);
+      el('form-error').style.display = error ? 'block' : 'none';
+      el('form-error').textContent = error;
+      if (error) { clearResults(); return null; }
+
+      const q2 = input.demand * Math.pow(input.projected / input.price, input.elasticity);
+      const revenue1 = input.price * input.demand;
+      const revenue2 = input.projected * q2;
+      const profit1 = input.cost === null ? null : (input.price - input.cost) * input.demand;
+      const profit2 = input.cost === null ? null : (input.projected - input.cost) * q2;
+      const primary1 = profit1 === null ? revenue1 : profit1;
+      const primary2 = profit2 === null ? revenue2 : profit2;
+      const primaryChange = primary2 - primary1;
+      const demandChange = (q2 - input.demand) / input.demand;
+      const priceChange = (input.projected - input.price) / input.price;
+      const margin = input.cost === null ? null : (input.projected - input.cost) / input.projected;
+      const marginalRevenue = input.projected * (1 + 1 / input.elasticity);
+      const consumerSurplusChange = -((input.demand + q2) / 2) * (input.projected - input.price);
+      const profitOptimal = input.cost !== null && input.cost > 0 && input.elasticity < -1 ? input.cost * input.elasticity / (input.elasticity + 1) : null;
+      const stockBreach = input.stock !== null && q2 > input.stock;
+      const fulfilledQuantity = input.stock === null ? q2 : Math.min(q2, input.stock);
+      const realizedPrimary = input.cost === null ? input.projected * fulfilledQuantity : (input.projected - input.cost) * fulfilledQuantity;
+      const stockPrice = input.stock !== null ? input.price * Math.pow(input.stock / input.demand, 1 / input.elasticity) : null;
+      return { ...input, q2, revenue1, revenue2, profit1, profit2, primary1, primary2, primaryChange, demandChange, priceChange, margin, marginalRevenue, consumerSurplusChange, profitOptimal, stockBreach, fulfilledQuantity, realizedPrimary, stockPrice };
+    }
+
+    function syncRange(keepProjected = true) {
+      const price = el('current-price').valueAsNumber;
+      if (!Number.isFinite(price) || price <= 0) return;
+      const range = el('projected-price');
+      const minimum = +(price * .35).toFixed(2);
+      const maximum = +(price * 1.65).toFixed(2);
+      range.min = minimum;
+      range.max = maximum;
+      if (!keepProjected || +range.value < minimum || +range.value > maximum) range.value = price;
+      el('price-min').textContent = money.format(minimum);
+      el('price-max').textContent = money.format(maximum);
+    }
+
+    function render() {
+      const state = calculate();
+      if (!state) return;
+      renderRange(state);
+      renderMetrics(state);
+      renderNarrative(state);
+      renderStock(state);
+      renderCharts(state);
+    }
+
+    function renderRange(state) {
+      el('projected-price-output').value = money.format(state.projected);
+      el('projected-price-output').textContent = money.format(state.projected);
+      const change = el('price-change');
+      if (Math.abs(state.priceChange) < .0001) { change.textContent = 'Preço inalterado.'; change.className = 'price-change'; }
+      else { change.textContent = `${state.priceChange > 0 ? 'Aumento' : 'Redução'} de ${signedPercent(state.priceChange).replace('+', '').replace('−', '')} (${signedMoney(state.projected - state.price)}).`; change.className = `price-change ${state.priceChange > 0 ? 'negative' : 'positive'}`; }
+    }
+
+    function setMetric(valueId, value, className, subId, sub) {
+      const valueEl = el(valueId);
+      valueEl.textContent = value;
+      valueEl.className = `metric-value ${className}`;
+      el(subId).textContent = sub;
+    }
+
+    function renderMetrics(state) {
+      const usingProfit = state.cost !== null;
+      el('metric-main-label').textContent = usingProfit ? 'Lucro projetado' : 'Receita projetada';
+      setMetric('metric-main-value', compactMoney(state.primary2), classFor(state.primary2), 'metric-main-sub', usingProfit ? 'Antes de considerar estoque.' : 'Receita prevista no novo preço.');
+      setMetric('metric-demand-value', `${number.format(Math.round(state.q2))} un.`, classFor(state.demandChange), 'metric-demand-sub', `${signedPercent(state.demandChange)} em relação à demanda atual.`);
+      el('metric-change-label').textContent = usingProfit ? 'Variação no lucro' : 'Variação na receita';
+      setMetric('metric-change-value', signedMoney(state.primaryChange), classFor(state.primaryChange), 'metric-change-sub', `${signedPercent(state.primaryChange / Math.abs(state.primary1 || 1))} em relação ao cenário atual.`);
+      if (state.margin === null) setMetric('metric-margin-value', '—', 'neutral', 'metric-margin-sub', 'Informe o CMV para calcular.');
+      else setMetric('metric-margin-value', signedPercent(state.margin).replace('+', ''), classFor(state.margin), 'metric-margin-sub', `Margem unitária de ${money.format(state.projected - state.cost)}.`);
+    }
+
+    function elasticityLabel(ed) {
+      const abs = Math.abs(ed);
+      if (abs > 1.005) return 'elástica';
+      if (abs < .995) return 'inelástica';
+      return 'unitária';
+    }
+
+    function renderNarrative(state) {
+      const isIncrease = state.priceChange > .0001;
+      const isDecrease = state.priceChange < -.0001;
+      const usingProfit = state.cost !== null;
+      const direction = isIncrease ? 'aumento' : isDecrease ? 'redução' : 'manutenção';
+      const demandDirection = state.demandChange > .0001 ? 'cresce' : state.demandChange < -.0001 ? 'cai' : 'permanece';
+      el('economic-insight').innerHTML = `Com demanda <strong>${elasticityLabel(state.elasticity)}</strong> (Ed ${state.elasticity.toFixed(2)}), o ${direction} de preço faz a demanda ${demandDirection} <strong>${signedPercent(state.demandChange).replace('+', '').replace('−', '')}</strong>. A mudança estimada no excedente do consumidor é ${signedMoney(state.consumerSurplusChange)}.`;
+      let status = '';
+      let decision = '';
+      if (!isIncrease && !isDecrease) {
+        status = '<strong>Cenário base.</strong> O preço projetado é igual ao preço atual.';
+        decision = 'Mova o preço projetado para comparar a consequência econômica de uma decisão alternativa.';
+      } else if (usingProfit && state.projected <= state.cost) {
+        status = '<strong>Atenção: preço abaixo do CMV.</strong> Cada unidade vendida reduz o resultado operacional.';
+        decision = `O preço projetado está ${money.format(state.cost - state.projected)} abaixo do custo unitário. Reavalie a premissa antes de usar o cenário.`;
+      } else if (state.primaryChange > .005) {
+        status = `<strong>O cenário melhora ${usingProfit ? 'o lucro' : 'a receita'} projetada.</strong> A variação estimada é ${signedMoney(state.primaryChange)}.`;
+        decision = usingProfit && state.profitOptimal ? `No modelo, o preço que maximiza o lucro é ${money.format(state.profitOptimal)}. Compare-o com o posicionamento de mercado e a capacidade de venda.` : 'Valide se a elasticidade usada representa o comportamento observado no seu produto ou categoria.';
+      } else if (state.primaryChange < -.005) {
+        status = `<strong>O cenário reduz ${usingProfit ? 'o lucro' : 'a receita'} projetada.</strong> A variação estimada é ${signedMoney(state.primaryChange)}.`;
+        decision = usingProfit && state.elasticity < -1 && isIncrease ? 'Em demanda elástica, a perda de volume pode superar o ganho de margem unitária.' : 'Teste outras faixas de preço e confronte o cenário com os dados históricos.';
+      } else {
+        status = `<strong>O cenário é praticamente neutro para ${usingProfit ? 'o lucro' : 'a receita'}.</strong>`;
+        decision = 'A decisão pode depender de outras variáveis, como posicionamento, giro de estoque e capacidade operacional.';
+      }
+      el('status-text').innerHTML = status;
+      if (usingProfit && state.profitOptimal) decision += ` <strong>Referência:</strong> preço ótimo do modelo: ${money.format(state.profitOptimal)}.`;
+      el('decision-insight').innerHTML = decision;
+    }
+
+    function renderStock(state) {
+      const box = el('stock-insight');
+      if (state.stock === null) { box.hidden = true; return; }
+      box.hidden = false;
+      const name = state.cost === null ? 'Receita realizável' : 'Lucro realizável';
+      if (state.stockBreach) box.innerHTML = `<strong>Estoque insuficiente.</strong> A demanda projetada excede o estoque em ${number.format(Math.ceil(state.q2 - state.stock))} unidades. ${name}: <strong>${compactMoney(state.realizedPrimary)}</strong>. O preço que equaliza demanda e estoque é ${money.format(state.stockPrice)}.`;
+      else box.innerHTML = `<strong>Estoque suficiente.</strong> As ${number.format(Math.round(state.q2))} unidades projetadas cabem no estoque disponível. O preço sem ruptura seria ${money.format(state.stockPrice)}.`;
+    }
+
+    function clearResults() {
+      ['metric-main-value', 'metric-demand-value', 'metric-change-value', 'metric-margin-value'].forEach(id => { el(id).textContent = '—'; el(id).className = 'metric-value neutral'; });
+      el('status-text').textContent = 'Corrija as premissas para atualizar o cenário.';
+      el('economic-insight').textContent = '—'; el('decision-insight').textContent = '—'; el('stock-insight').hidden = true;
+    }
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svgNode = (name, attributes = {}) => { const node = document.createElementNS(svgNS, name); Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value))); return node; };
+    const addSvgText = (svg, x, y, text, className, anchor = 'start') => { const node = svgNode('text', { x, y, 'text-anchor': anchor, class: className }); node.textContent = text; svg.append(node); };
+    const formatAxisCurrency = value => Math.abs(value) >= 1000 ? `R$ ${(value / 1000).toFixed(0)} mil` : `R$ ${value.toFixed(0)}`;
+
+    function drawChart(svg, config) {
+      svg.replaceChildren();
+      const width = 640, height = 290, margin = { top: 24, right: 20, bottom: 43, left: 62 };
+      const innerWidth = width - margin.left - margin.right, innerHeight = height - margin.top - margin.bottom;
+      const xMin = config.xMin, xMax = config.xMax;
+      const allY = config.series.flatMap(series => series.points.map(point => point.y)).concat(config.extraY || []);
+      let yMin = config.yStartsAtZero ? 0 : Math.min(0, ...allY);
+      let yMax = Math.max(...allY);
+      if (yMax === yMin) yMax = yMin + 1;
+      const padding = (yMax - yMin) * .12;
+      yMin = config.yStartsAtZero ? 0 : yMin - padding;
+      yMax += padding;
+      const x = value => margin.left + ((value - xMin) / (xMax - xMin)) * innerWidth;
+      const y = value => margin.top + (1 - ((value - yMin) / (yMax - yMin))) * innerHeight;
+      for (let i = 0; i <= 4; i++) {
+        const value = yMin + ((yMax - yMin) * i / 4);
+        const py = y(value);
+        svg.append(svgNode('line', { x1: margin.left, y1: py, x2: width - margin.right, y2: py, class: 'grid-line' }));
+        addSvgText(svg, margin.left - 8, py + 4, config.yFormat(value), '', 'end');
+      }
+      svg.append(svgNode('line', { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: 'axis-line' }));
+      svg.append(svgNode('line', { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: 'axis-line' }));
+      [xMin, (xMin + xMax) / 2, xMax].forEach(value => addSvgText(svg, x(value), height - margin.bottom + 19, money.format(value), '', 'middle'));
+      addSvgText(svg, width / 2, height - 6, 'Preço', 'axis-title', 'middle');
+      addSvgText(svg, margin.left, 13, config.yTitle, 'axis-title');
+      if (config.referenceY !== null && config.referenceY !== undefined && config.referenceY >= yMin && config.referenceY <= yMax) svg.append(svgNode('line', { x1: margin.left, y1: y(config.referenceY), x2: width - margin.right, y2: y(config.referenceY), stroke: '#9a5b00', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }));
+      config.series.forEach(series => {
+        const path = series.points.map((point, index) => `${index ? 'L' : 'M'} ${x(point.x).toFixed(2)} ${y(point.y).toFixed(2)}`).join(' ');
+        svg.append(svgNode('path', { d: path, fill: 'none', stroke: series.color, 'stroke-width': series.width || 2.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+      });
+      config.markers.forEach(marker => {
+        const px = x(marker.x), py = y(marker.y);
+        svg.append(svgNode('circle', { cx: px, cy: py, r: marker.r || 5, fill: marker.color, stroke: '#fff', 'stroke-width': 2 }));
+        addSvgText(svg, px, Math.max(margin.top + 12, py - 10), marker.label, marker.className, 'middle');
+      });
+    }
+
+    function renderCharts(state) {
+      const xMin = state.price * .35, xMax = state.price * 1.65, steps = 64;
+      const samples = Array.from({ length: steps + 1 }, (_, index) => { const price = xMin + ((xMax - xMin) * index / steps); const quantity = state.demand * Math.pow(price / state.price, state.elasticity); return { x: price, q: quantity, value: state.cost === null ? price * quantity : (price - state.cost) * quantity }; });
+      drawChart(el('demand-chart'), { xMin, xMax, yStartsAtZero: true, yTitle: 'Quantidade (un.)', yFormat: value => number.format(Math.max(0, value)), referenceY: state.stock, extraY: state.stock === null ? [] : [state.stock], series: [{ points: samples.map(point => ({ x: point.x, y: point.q })), color: '#1e40ff' }], markers: [{ x: state.price, y: state.demand, color: '#111111', label: 'P₁', className: 'label-current' }, { x: state.projected, y: state.q2, color: '#1e40ff', label: 'P₂', className: 'label-projected' }] });
+      el('stock-legend').hidden = state.stock === null;
+      const usingProfit = state.cost !== null;
+      el('value-chart-title').textContent = usingProfit ? 'Curva de lucro' : 'Curva de receita';
+      el('value-chart-subtitle').textContent = usingProfit ? 'Lucro estimado conforme o preço muda' : 'Receita total conforme o preço muda';
+      el('value-chart-key').textContent = usingProfit ? 'π = (P − c) × Q' : 'RT = P × Q';
+      const optimalMarker = state.profitOptimal && state.profitOptimal >= xMin && state.profitOptimal <= xMax ? { x: state.profitOptimal, y: (state.profitOptimal - state.cost) * state.demand * Math.pow(state.profitOptimal / state.price, state.elasticity), color: '#9a5b00', label: 'P*', className: 'label-current', r: 5 } : null;
+      drawChart(el('value-chart'), { xMin, xMax, yStartsAtZero: false, yTitle: usingProfit ? 'Lucro (R$)' : 'Receita (R$)', yFormat: formatAxisCurrency, referenceY: null, series: [{ points: samples.map(point => ({ x: point.x, y: point.value })), color: '#111111' }], markers: [{ x: state.price, y: state.primary1, color: '#111111', label: 'P₁', className: 'label-current' }, { x: state.projected, y: state.primary2, color: '#1e40ff', label: 'P₂', className: 'label-projected' }, ...(optimalMarker ? [optimalMarker] : [])] });
+      el('optimal-legend').hidden = !optimalMarker;
+    }
+
+    function loadStoredScenarios() {
+      try { const saved = JSON.parse(localStorage.getItem(storageKey)); return Array.isArray(saved) ? saved.slice(0, 8) : []; } catch { return []; }
+    }
+    function persistScenarios() { localStorage.setItem(storageKey, JSON.stringify(scenarios)); }
+    function renderScenarios() {
+      const list = el('scenario-list');
+      list.replaceChildren();
+      el('clear-scenarios').hidden = scenarios.length === 0;
+      if (!scenarios.length) { const empty = document.createElement('p'); empty.className = 'scenario-empty'; empty.textContent = 'Nenhum cenário salvo ainda.'; list.append(empty); return; }
+      scenarios.slice().reverse().forEach((scenario, reversedIndex) => {
+        const index = scenarios.length - 1 - reversedIndex;
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'scenario-item'; button.dataset.index = index;
+        const title = document.createElement('strong'); title.textContent = `P₂: ${money.format(scenario.projected)}`;
+        const premise = document.createElement('small'); premise.textContent = `P₁ ${money.format(scenario.price)} · Q₁ ${number.format(scenario.demand)} · Ed ${scenario.elasticity}`;
+        const details = document.createElement('small'); details.textContent = `${scenario.cost === null ? 'Sem CMV' : `CMV ${money.format(scenario.cost)}`} · ${scenario.stock === null ? 'Sem limite de estoque' : `${number.format(scenario.stock)} un. em estoque`}`;
+        button.append(title, premise, details); button.addEventListener('click', () => loadScenario(index)); list.append(button);
+      });
+    }
+    function saveScenario() {
+      const state = calculate(); if (!state) return;
+      scenarios.push({ price: state.price, demand: state.demand, elasticity: state.elasticity, cost: state.cost, stock: state.stock, projected: state.projected });
+      scenarios = scenarios.slice(-8); persistScenarios(); renderScenarios();
+    }
+    function loadScenario(index) {
+      const scenario = scenarios[index]; if (!scenario) return;
+      el('current-price').value = scenario.price; el('current-demand').value = scenario.demand; el('elasticity').value = scenario.elasticity; el('unit-cost').value = scenario.cost === null ? '' : scenario.cost; el('stock').value = scenario.stock === null ? '' : scenario.stock;
+      syncRange(false); el('projected-price').value = scenario.projected; render(); window.scrollTo({ top: el('simulador').offsetTop - 76, behavior: 'smooth' });
+    }
+    function resetScenario() {
+      el('current-price').value = defaultValues.price; el('current-demand').value = defaultValues.demand; el('elasticity').value = defaultValues.elasticity; el('unit-cost').value = defaultValues.cost; el('stock').value = defaultValues.stock;
+      syncRange(false); el('projected-price').value = defaultValues.projected; render();
+    }
+
+    ['current-demand', 'elasticity', 'unit-cost', 'stock'].forEach(id => el(id).addEventListener('input', render));
+    el('current-price').addEventListener('input', () => { syncRange(); render(); });
+    el('projected-price').addEventListener('input', render);
+    el('save-scenario').addEventListener('click', saveScenario);
+    el('reset-scenario').addEventListener('click', event => { event.preventDefault(); resetScenario(); });
+    el('clear-scenarios').addEventListener('click', () => { scenarios = []; localStorage.removeItem(storageKey); renderScenarios(); });
+    syncRange(false); render(); renderScenarios();
+  </script>
+</body>
+</html>
